@@ -1,0 +1,309 @@
+udemy
+Browse 
+
+Search for Courses
+ 
+Become an Instructor
+My Courses
+5
+Brian McNamara
+Section: 1
+6 / 6
+Course Introduction
+1. Welcome to R Shiny
+2:23
+2. Get ready for R Shiny
+11:51
+3. The Basic Shiny Template
+7:54
+4. The Input Widget Gallery - Tools to Enable User Input
+6:32
+5. The Link List
+4:00
+6. Link Collection
+0:00
+Section: 2
+9 / 9
+The Basics of R Shiny
+7. Section II
+3:14
+8. Section Script - Shiny Basics
+0:00
+9. Integrating an Input Widget - The User interface Side
+5:53
+10. Connecting an Input Widget with the Server
+4:30
+11. Using Functions Render and Reactive - Reactivity
+6:32
+12. Planning Your App Layout
+4:24
+13. Multi Page Apps - Using Tabsets
+3:49
+14. HTML Tags in Shiny
+9:15
+15. Style Your App with shinythemes
+3:22
+Section: 3
+9 / 9
+Publishing and Advanced Concepts of Shiny
+16. Section III
+3:37
+17. Section Script - Advanced Shiny
+0:00
+18. Publishing and Sharing
+6:27
+19. Shinyapps.io
+5:49
+20. Integrating Tables with DT
+13:42
+21. Add Brush and Click Selection Tools to Your App
+12:33
+22. Downloadable Tables
+5:01
+23. Integrating all Sorts of Media
+10:05
+24. Tools for Your Own Apps
+4:43
+Section: 4
+2 / 6
+Course Project - Get Your Feet Wet
+25. Take a Look at the Project Data - and download here
+3:28
+ course_proj_data.csv
+26. Project Description - Your Homework
+8:16
+27. Project Solution - User Interface
+8:10
+28. Project Solution - Server
+10:57
+29. Project Script
+0:00
+30. Conclusion
+2:51
+Section Script - Shiny Basics
+Section 2, Lecture 8
+## A basic shiny app
+
+library(shiny)
+
+server = function(input, output, session) {} # the server
+
+ui = basicPage("our first basic app") # the user interface
+
+shinyApp(ui = ui, server = server) # app launch
+
+
+
+## Using Input Widgets
+
+server <- function(input,output, session) {
+  }
+
+ui <-   basicPage(
+  h1("Using textInput and checkboxInput"),
+  textInput("mystring", "Write here"),
+  checkboxInput("mycheckbox", "Factor Y")
+)
+
+shinyApp(ui = ui, server = server)
+
+
+
+## Making the app reactive
+
+server <- function(input, output, session) {
+  observe({
+    addtext <- paste("your initial input:", input$mystring)
+    updateTextInput(session, "mystring2", value=addtext)
+  })
+  }
+
+ui <-   basicPage(
+  h1("Using Observe"),
+  textInput("mystring", "Write here"),
+  textInput("mystring2", "Full App Output")
+)
+
+shinyApp(ui = ui, server = server)
+
+
+
+## using reactive and render in one app
+
+server <- function(input, output, session) {
+  
+  data <- reactive({
+     rnorm(50) * input$myslider
+  })
+  
+  output$plot <- renderPlot({
+    plot(data(), col = "red", pch = 21, bty = "n")
+  })
+}
+
+ui <- basicPage(
+  h1("Using Reactive"),
+  sliderInput(inputId = "myslider",
+              label = "Slider1",
+              value = 1, min = 1, max = 20),
+  plotOutput("plot")
+)
+
+shinyApp(ui = ui, server = server)
+
+
+
+## layouting - basic sidebar layout
+
+server <- function(input, output, session) {}
+
+ui <- fluidPage(
+  
+  sidebarLayout(
+    
+    sidebarPanel(
+      "my sidebar"
+    ), 
+    
+    mainPanel(
+      "my mainpanel"
+    )
+  )
+)
+
+shinyApp(ui = ui, server = server)
+
+
+
+## layouting - tabsets
+
+server <- function(input, output, session) {}
+
+ui <- fluidPage(
+  
+  titlePanel("using Tabsets"), # our title
+  
+  sidebarLayout(
+    
+    sidebarPanel(
+      sliderInput(inputId = "s1",
+                  label = "My Slider",
+                  value = 1, min = 1, max = 20)
+    ),
+    
+    mainPanel(
+      tabsetPanel(
+        tabPanel("Tab1", "First Tab"), 
+        tabPanel("Tab2", "Second Tab"), 
+        tabPanel("Tab3", "Third Tab")
+      )
+    )
+  )
+)
+
+shinyApp(ui = ui, server = server)
+
+####
+
+names(tags)
+
+####
+
+## Tags
+
+server <- function(input, output, session) {}
+
+ui <- fluidPage(
+  
+  titlePanel(strong("This is the STRONG tag on the Title")), # using strong as a direct tag
+  
+  sidebarLayout(
+    
+    sidebarPanel(
+      withTags(
+      div(
+        b("bold text: here you see a line break, a horizontal line and some code"),
+          br(),
+          hr(),
+      code("plot(lynx)")
+    ))),
+    
+    mainPanel(
+      tabsetPanel(
+        tabPanel("Weblinks with direct tag a", a(href="www.r-tutorials.com", "r-tutorials")), 
+        tabPanel(tags$b("Using b for bold text"), tags$b("a bold text")), 
+        tabPanel("Citations with the blockquote tag", tags$blockquote("R is Great", cite = "R Programmer"))
+      )
+    )
+))
+
+shinyApp(ui = ui, server = server)
+
+
+
+
+
+## changing the themes
+
+server <- function(input, output, session) {}
+
+library(shinythemes) # adding the shinythemese package
+
+ui <- fluidPage(themeSelector(), # displaying the different themes, replace this line when publishing with theme = shinytheme("darkly")
+  
+  titlePanel(strong("This is the STRONG tag on the Title")), # using strong as a direct tag
+  
+  sidebarLayout(
+    
+    sidebarPanel(
+      withTags(
+        div(
+          b("bold text: here you see a line break, a horizontal line and some code"),
+          br(),
+          hr(),
+          code("plot(lynx)")
+        ))),
+    
+    mainPanel(
+      tabsetPanel(
+        tabPanel("Weblinks with direct tag a", a(href="www.r-tutorials.com", "r-tutorials")), 
+        tabPanel(tags$b("Using b for bold text"), tags$b("a bold text")), 
+        tabPanel("Citations with the blockquote tag", tags$blockquote("R is Great", cite = "R Programmer"))
+      )
+    )
+  ))
+
+shinyApp(ui = ui, server = server)
+
+ 
+Browse Q&A
+Continue
+
+
+ 
+Go to Dashboard
+Questions
+ 
+Search for a question
+0 questions in this lecture
+
+Ask a new question
+No questions yet
+Be the first to ask your question! You’ll be able to add details in the next step.
+
+Question Details
+About Us
+Udemy for Business
+Become an Instructor
+Affiliates
+Blog
+Topics
+Mobile Apps
+Support
+Careers
+Resources
+ English 
+Copyright © 2017 Udemy, Inc.
+Terms
+Privacy Policy
+Intellectual Property
